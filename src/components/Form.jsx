@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Fade from 'react-reveal/Fade';
 import Loader from './shared/Loader';
 import PropTypes from 'prop-types';
+import { ImSearch } from "react-icons/im";
 
 const Select = styled.select`
 	border: 3px solid #222831;
@@ -21,6 +22,35 @@ const FormContainer = styled.article`
 	font-size: 1.4em;
 	z-index:1000;
 	margin-bottom: 2em;
+	position: relative;
+`
+
+const Submit = styled.button`
+	padding: .2em .3em;
+	font-size: 1.1em;
+	border: none;
+	border-radius: 30px;
+	border-bottom-right-radius: 10px;
+	font-weight: 500;
+	letter-spacing: 1.4;
+	color: #393e46;
+	text-align: center;
+	background-color: #ffd369;
+	margin-left: 98%;
+
+	&:hover{
+		background-color: #fcbf2f;
+		cursor: pointer;
+		color: #121213;
+	}
+
+	@media (max-width: 720px){
+  font-size: 1.8em;
+	position: absolute;
+	bottom: -28px;
+	right: -10px;
+	margin-left: 85%;
+}
 `
 
 const citiesSelect = (cities, city, getCity) => (
@@ -42,7 +72,7 @@ const citiesSelect = (cities, city, getCity) => (
 )
 
 
-const Form = ({countries, country, setCities, setCountry, cities, city, setCity, isLoading, setShowWeather}) => {
+const Form = ({countries, country, setCities, setCountry, setIsError, cities, city, setCity, isLoading, weatherData, setShowWeather}) => {
 
 	const getCountry = ({target:{value, name}}) => {
 		console.info(value, name);
@@ -53,12 +83,27 @@ const Form = ({countries, country, setCities, setCountry, cities, city, setCity,
 	const getCity = ({target:{value, name}}) => {
 		console.info(value, name);
 		setCity(value)
-		setShowWeather(false)
+		
 	}
+
+	const handleSubmit = (e) => {
+		e.preventDefault()
+		console.info(country, city);
+		if(!country || !city){
+			setIsError(true)
+			setShowWeather(true)
+			return
+		}
+
+		setShowWeather(false)
+		setIsError(false)
+		weatherData(city, country)
+	}
+	
 
 	return (
 		<FormContainer>
-			<form>
+			<form onSubmit={handleSubmit}>
 				<label>Countries:</label>
 				<Select value={country} name="country" onChange={getCountry}>
 					<option value="">Select a country</option>
@@ -70,6 +115,10 @@ const Form = ({countries, country, setCities, setCountry, cities, city, setCity,
 				</Select>
 					{cities.length > 0 && citiesSelect(cities, city, getCity, isLoading)}
 					{isLoading && <Loader />}
+
+					<Submit type="submit">
+						<ImSearch />
+					</Submit>
 			</form>
 		</FormContainer>
 	)
@@ -84,7 +133,8 @@ Form.propTypes = {
 	city: PropTypes.string.isRequired, 
 	setCity: PropTypes.func.isRequired, 
 	isLoading: PropTypes.bool.isRequired, 
-	setShowWeather: PropTypes.func.isRequired
+	setShowWeather: PropTypes.func.isRequired,
+	weatherData: PropTypes.func.isRequired
 }
 
 export default Form

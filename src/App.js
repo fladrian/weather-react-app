@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import Header from './components/shared/Header'
 import Weather from './components/Weather'
@@ -14,6 +15,11 @@ display: flex;
 justify-content: space-between;
 align-items: flex-start;
 flex-wrap: wrap;
+
+@media (max-width: 720px){
+  padding: 0 .5em;
+  width: 85%;
+}
 `
 
 function App() {
@@ -55,6 +61,30 @@ function App() {
       console.info(error)
     }
   }
+  const weatherData = async (city, country_iso2) => {
+    if (!country_iso2 || !city) return
+    setIsError(false)
+    setShowWeather(false)
+    try {
+      const { data } = await GetWeather(city, country_iso2)
+      const weatherInfo = {
+        humidity: data.main.humidity,
+        pressure: data.main.pressure,
+        city_name: data.name,
+        country_code: data.sys.country,
+        speed: data.wind.speed,
+        weather: data.weather[0].main,
+        description: data.weather[0].description,
+        temp: kelvinToCelsius(data.main.feels_like)
+      }
+      setWeather(weatherInfo)
+      console.info(weatherInfo)
+      setShowWeather(true)
+    } catch (error) {
+      setShowWeather(true)
+      setIsError(true)
+    }
+  }
 
   useEffect(() => {
     countriesData()
@@ -63,34 +93,6 @@ function App() {
   useEffect(() => {
     citiesData(country)
   }, [country])
-
-  useEffect(() => {
-    const weatherData = async (city, country_iso2) => {
-      if (!country_iso2 || !city) return
-      setIsError(false)
-      setShowWeather(false)
-      try {
-        const { data } = await GetWeather(city, country_iso2)
-        const weatherInfo = {
-          humidity: data.main.humidity,
-          pressure: data.main.pressure,
-          city_name: data.name,
-          country_code: data.sys.country,
-          speed: data.wind.speed,
-          weather: data.weather[0].main,
-          description: data.weather[0].description,
-          temp: kelvinToCelsius(data.main.feels_like)
-        }
-        setWeather(weatherInfo)
-        console.info(weatherInfo)
-        setShowWeather(true)
-      } catch (error) {
-        setShowWeather(true)
-        setIsError(true)
-      }
-    }
-    weatherData(city, country)
-  }, [city, country])
 
 
   return (
@@ -107,6 +109,8 @@ function App() {
             city={city}
             isLoading={isLoading}
             setShowWeather={setShowWeather}
+            weatherData={weatherData}
+            setIsError={setIsError}
           />
           {showWeather && <Weather weather={weather}
             isError={isError}

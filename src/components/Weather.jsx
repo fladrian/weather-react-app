@@ -29,6 +29,10 @@ const BodyCard = styled.div`
 		display: inline-block;
 		text-align: right;
 	}
+	@media (max-width: 720px){
+  padding: 0 .5em;
+  font-size: 1.6em;
+}
 `
 const InfoCard = styled.span`
 	font-size: .9em;

@@ -3,6 +3,7 @@ import { WiDayCloudy } from "react-icons/wi";
 import Pulse from 'react-reveal/Pulse';
 import Fade from 'react-reveal/Fade';
 
+
 const HeaderContainer = styled.header`
 	width: 100%;
 	height: 120px;
@@ -24,6 +25,23 @@ const HeaderContainer = styled.header`
 		display: inline-block;
 		text-align: right;
 	}
+
+	@media (max-width: 720px){
+  padding: 0 .5em;
+  font-size: .8em;
+
+	& div {
+		display: block;
+		display: flex;
+		justify-content: center;
+	}
+
+	& svg {
+		font-size: 1.8em;
+		display: block;
+		text-align: center;
+	}
+}
 
 `
 
